@@ -5,6 +5,10 @@
       "dest": "/api/$1.php"
     },
     {
+      "src": "/modulo_acceso/controlador.061",
+      "dest": "/api/seleccion_modulo.php"
+    },
+    {
       "src": "/modulo_acceso/",
       "dest": "/api/log.php"
     },
