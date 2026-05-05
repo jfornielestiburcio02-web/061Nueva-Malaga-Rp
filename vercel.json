@@ -6,7 +6,7 @@
     },
     {
       "src": "/modulo_acceso/",
-      "dest": "/api/inicio_de_sesion/log.php"
+      "dest": "/api/log.php"
     },
     {
       "src": "/",
