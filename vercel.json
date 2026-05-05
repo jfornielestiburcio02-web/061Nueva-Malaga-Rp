@@ -5,6 +5,10 @@
       "dest": "/api/$1.php"
     },
     {
+      "src": "/modulo_acceso/",
+      "dest": "/api/inicio_de_sesion/log.php"
+    },
+    {
       "src": "/",
       "dest": "/index.html"
     }
