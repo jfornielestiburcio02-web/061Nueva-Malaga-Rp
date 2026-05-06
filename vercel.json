@@ -1,12 +1,12 @@
 {
   "routes": [
     {
-      "src": "/(.*).php",
-      "dest": "/api/$1.php"
+      "src": "/sidebar/(.*)/prin.php",
+      "dest": "/api/sidebar/$1/prin.php"
     },
     {
-      "src": "/sidebar/061/prin.php",
-      "dest": "/api/sidebar/061/prin.php"
+      "src": "/header/(.*)/prin.php",
+      "dest": "/api/header/$1/prin.php"
     },
     {
       "src": "/modulo_acceso/controlador.061",
@@ -21,12 +21,16 @@
       "dest": "/api/log.php"
     },
     {
+      "src": "/(.*).php",
+      "dest": "/api/$1.php"
+    },
+    {
       "src": "/",
       "dest": "/index.html"
     }
   ],
   "functions": {
-    "api/*.php": {
+    "api/**/*.php": {
       "runtime": "vercel-php@0.7.1"
     }
   }
