@@ -1,23 +1,26 @@
 <?php
-// 1. INICIAR SESIÓN INMEDIATAMENTE (Sin espacios antes del <?php)
-session_start(); 
-
 // Configuración de tu Firebase
 $projectId = "yr92q8h4y5972h4y952qhy3f"; 
 $apiKey = "AIzaSyBwhUOE8XpDFGf7dsqEdfXh2FCWE94JR2w"; 
 
-// 2. COMPROBACIÓN DE SEGURIDAD
-// Si te echa al login, es porque o la cookie 'auth_061_token' no existe 
-// o la sesión 'modulo_activo' no se guardó en el paso anterior.
-if (!isset($_COOKIE['auth_061_token']) || !isset($_SESSION['modulo_activo'])) {
-    header("Location: /login.php");
+// 1. CAPTURAR EL ROL (Lo enviamos desde el selector)
+// Si no hay rol, volvemos al selector para que elijan uno
+$rolSolicitado = $_POST['set_modulo'] ?? ''; 
+
+if (empty($rolSolicitado)) {
+    header("Location: /modulo_acceso/controlador.061");
+    exit();
+}
+
+// 2. VALIDACIÓN DE SEGURIDAD (Copiado de tu código que sí funciona)
+if (!isset($_COOKIE['auth_061_token'])) {
+    header("Location: /modulo_acceso/");
     exit();
 }
 
 $usuarioDoc = base64_decode($_COOKIE['auth_061_token']);
-$rolSolicitado = $_SESSION['modulo_activo']; 
 
-// 3. VALIDACIÓN DE ROL CONTRA FIREBASE
+// 3. CONSULTA A FIRESTORE PARA VERIFICAR PERMISOS
 $url = "https://firestore.googleapis.com/v1/projects/{$projectId}/databases/(default)/documents/empleadosX/{$usuarioDoc}?key={$apiKey}";
 
 $ch = curl_init();
@@ -32,6 +35,7 @@ $tienePermiso = false;
 if ($httpCode == 200) {
     $data = json_decode($response, true);
     $rolesArray = $data['fields']['roles']['arrayValue']['values'] ?? [];
+    
     foreach ($rolesArray as $item) {
         if (isset($item['stringValue']) && $item['stringValue'] === $rolSolicitado) {
             $tienePermiso = true;
@@ -40,75 +44,68 @@ if ($httpCode == 200) {
     }
 }
 
-// Si los roles no coinciden, fuera.
+// Si no tiene el rol que dice tener, fuera
 if (!$tienePermiso) {
-    header("Location: /modulo_acceso/controlador.061?error=sin_permiso");
+    header("Location: /modulo_acceso/controlador.061?error=no_access");
     exit();
 }
 
 $rolMin = strtolower($rolSolicitado);
 ?>
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>CEC - Panel Operativo</title>
+    <title>Panel Operativo - 061 Málaga</title>
     <style>
-        /* RESET TOTAL */
-        body, div, dl, dt, dd, ul, ol, li, h1, h2, h3, h4, h5, h6, pre, form, fieldset, input, textarea, p, blockquote, th, td {
-            margin: 0; padding: 0;
-        }
+        /* Estilos de estructura limpia */
         body, html {
+            margin: 0; padding: 0;
             height: 100%; width: 100%;
             overflow: hidden;
-            font-family: Verdana, Arial, Helvetica, sans-serif;
-            background-color: #ffffff;
+            font-family: Verdana, sans-serif;
+            background-color: #fff;
         }
 
-        /* HEADER FIJO */
+        /* Cabecera */
         #frame-header {
             position: absolute;
             top: 0; left: 0;
             width: 100%; height: 60px;
             z-index: 100;
-            background: #ffffff;
-            border-bottom: 1px solid #C5E1D1; /* Color de tu referencia[cite: 1] */
+            border-bottom: 1px solid #C5E1D1;
         }
 
-        /* CONTENEDOR SIDEBAR (PARA EL HOVER) */
+        /* Sidebar con efecto Hover */
         #contenedor-sidebar {
             position: absolute;
             top: 60px; left: 0; bottom: 0;
-            width: 50px; /* Tamaño cerrado */
+            width: 50px; /* Cerrado */
             z-index: 50;
-            background-color: #ffffff;
+            background: #fff;
             border-right: 1px solid #C5E1D1;
-            transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: width 0.3s ease;
             overflow: hidden;
         }
 
-        /* Expansión al pasar el ratón */
         #contenedor-sidebar:hover {
-            width: 200px;
-            box-shadow: 5px 0 15px rgba(0,0,0,0.05);
+            width: 200px; /* Abierto */
+            box-shadow: 5px 0 15px rgba(0,0,0,0.1);
         }
 
         #frame-sidebar {
-            width: 200px; 
-            height: 100%;
-            border: 0 none;
+            width: 200px; height: 100%; border: 0;
         }
 
-        /* IFRAME DE CONTENIDO */
+        /* Contenido */
         #frame-content {
             position: absolute;
-            top: 60px;
-            left: 50px; /* Alineado con el sidebar cerrado */
+            top: 60px; left: 50px;
             right: 0; bottom: 0;
             width: calc(100% - 50px);
             height: calc(100% - 60px);
-            border: 0 none;
-            z-index: 1;
+            border: 0;
         }
     </style>
 </head>
@@ -117,12 +114,12 @@ $rolMin = strtolower($rolSolicitado);
     <!-- Header -->
     <iframe id="frame-header" src="header/<?php echo $rolMin; ?>/prin.php" name="header"></iframe>
 
-    <!-- Sidebar con hover -->
+    <!-- Sidebar -->
     <div id="contenedor-sidebar">
         <iframe id="frame-sidebar" src="sidebar/<?php echo $rolMin; ?>/prin.php" name="sidebar"></iframe>
     </div>
 
-    <!-- Contenido Principal -->
+    <!-- Contenido -->
     <iframe id="frame-content" src="content/<?php echo $rolMin; ?>/prin.php" name="content"></iframe>
 
 </body>
