@@ -8,13 +8,13 @@ $apiKey = "AIzaSyBwhUOE8XpDFGf7dsqEdfXh2FCWE94JR2w";
 // 1. PROCESAR SELECCIÓN (Si viene del formulario de abajo)
 if (isset($_POST['set_modulo'])) {
     $_SESSION['modulo_activo'] = $_POST['set_modulo'];
-    header("Location: /CEC.php"); // Redirige a la URL limpia sin parámetros
+    header("Location: CEC.xsp"); // Redirige a la URL limpia sin parámetros
     exit();
 }
 
 // 2. CHEQUEO DE COOKIE (Caché local)
 if (!isset($_COOKIE['auth_061_token'])) {
-    header("Location: /login.php");
+    header("Location: /modulo_acceso/");
     exit();
 }
 
@@ -46,7 +46,7 @@ if ($httpCode == 200) {
 } else {
     // Si la cookie no coincide con Firebase, limpiamos y fuera
     setcookie("auth_061_token", "", time() - 3600, "/");
-    header("Location: /login.php");
+    header("Location: /modulo_acceso/");
     exit();
 }
 ?>
@@ -130,7 +130,7 @@ if ($httpCode == 200) {
             <p style="color: red; font-weight: bold;">Sin roles asignados en sistema.</p>
         <?php endif; ?>
 
-        <div class="logout" onclick="window.location.href='/login.php?logout=true'">Cerrar Sesión</div>
+        <div class="logout" onclick="window.location.href='/modulo_acceso/'">Cerrar Sesión</div>
     </div>
 
     <script>
