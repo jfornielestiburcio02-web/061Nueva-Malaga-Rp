@@ -128,7 +128,7 @@ if ($httpCode == 200) {
     <script>
         function modulo_seleccionado(modulo) {
             // Te mando a CEC.php con el parámetro que has elegido
-            window.location.href = "/CEC.php?modulo=" + modulo;
+            window.location.href = "CEC.xsp?modulo=" + modulo;
         }
     </script>
 </body>
