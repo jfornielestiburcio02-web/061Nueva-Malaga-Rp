@@ -49,90 +49,96 @@ $rolMin = strtolower($rolSolicitado);
     <meta charset="UTF-8">
     <title>Panel Operativo - 061 Málaga</title>
     <style>
+        /* RESET ESTILO SEGÚN TU REFERENCIA */
+        body, div, dl, dt, dd, ul, ol, li, h1, h2, h3, h4, h5, h6, pre, form, fieldset, input, textarea, p, blockquote, th, td {
+            margin: 0;
+            padding: 0;
+        }
+        ol, ul { list-style: none outside none; }
+        
         body, html {
-            margin: 0; padding: 0;
-            height: 100%; width: 100%;
-            overflow: hidden;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #f0f2f5; /* Fondo gris muy claro para contraste */
-        }
-
-        /* Contenedor Principal */
-        .main-layout {
-            display: grid;
-            grid-template-areas: 
-                "header header"
-                "sidebar content";
-            grid-template-rows: 60px 1fr;
-            grid-template-columns: 60px 1fr; /* El sidebar empieza midiendo solo 60px */
-            height: 100vh;
-            transition: grid-template-columns 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        /* EFECTO HOVER: Cuando pasas el ratón por el layout, el sidebar se expande */
-        .main-layout:hover {
-            grid-template-columns: 260px 1fr;
-        }
-
-        iframe {
-            border: none;
-            width: 100%;
             height: 100%;
-            background: #fff;
-        }
-
-        /* Estilos del Header (Blanco) */
-        #frame-header {
-            grid-area: header;
-            z-index: 100;
-            border-bottom: 1px solid #e0e0e0;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
-        }
-
-        /* Estilos del Sidebar (Blanco y dinámico) */
-        #frame-sidebar {
-            grid-area: sidebar;
-            z-index: 90;
-            border-right: 1px solid #e0e0e0;
-            transition: all 0.4s;
-            /* Ocultamos el scroll del sidebar mientras está cerrado */
+            width: 100%;
             overflow: hidden;
-        }
-
-        /* Estilos del Contenido Principal */
-        #frame-content {
-            grid-area: content;
+            font-family: Verdana, Arial, Helvetica, sans-serif;
             background-color: #ffffff;
         }
 
-        /* Decoración de la zona de "agarre" para que el usuario sepa que hay algo ahí */
-        .sidebar-hint {
+        /* HEADER FIJO ABAJO DEL TODO (Z-INDEX ALTO) */
+        #frame-header {
             position: absolute;
+            top: 0;
             left: 0;
-            top: 60px;
-            bottom: 0;
-            width: 5px;
-            background: #d32f2f;
-            z-index: 101;
-            pointer-events: none;
+            width: 100%;
+            height: 60px;
+            z-index: 100;
+            background: #ffffff;
+            border-bottom: 1px solid #C5E1D1; /* Color de tu referencia */
+            border-top: 0 none;
         }
+
+        /* CONTENEDOR DEL CONTENIDO (SE AJUSTA AL MARGEN IZQUIERDO DEL SIDEBAR CERRADO) */
+        #frame-content {
+            position: absolute;
+            top: 60px;
+            left: 50px; /* Ancho del sidebar cuando está cerrado */
+            right: 0;
+            bottom: 0;
+            width: calc(100% - 50px);
+            height: calc(100% - 60px);
+            border: 0 none;
+            z-index: 1;
+            transition: left 0.3s ease, width 0.3s ease;
+        }
+
+        /* SIDEBAR QUE SE ABRE AL PASAR EL RATÓN */
+        #contenedor-sidebar {
+            position: absolute;
+            top: 60px;
+            left: 0;
+            bottom: 0;
+            width: 50px; /* Tamaño cerrado */
+            z-index: 50;
+            background-color: #ffffff;
+            border-right: 1px solid #C5E1D1;
+            transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            overflow: hidden;
+        }
+
+        /* Cuando el ratón entra en el contenedor del sidebar */
+        #contenedor-sidebar:hover {
+            width: 200px; /* Tamaño abierto */
+            box-shadow: 5px 0 15px rgba(0,0,0,0.1);
+        }
+
+        /* Ajustamos el iframe dentro del contenedor para que no se mueva raro */
+        #frame-sidebar {
+            width: 200px; /* El iframe interno siempre mide lo mismo para no romper el layout */
+            height: 100%;
+            border: 0 none;
+        }
+
+        /* OPCIONAL: Si quieres que el contenido se desplace al abrir el sidebar, descomenta esto:
+        #contenedor-sidebar:hover ~ #frame-content {
+            left: 200px;
+            width: calc(100% - 200px);
+        }
+        */
+
     </style>
 </head>
 <body>
 
-    <!-- Línea roja fina que indica que hay un menú lateral interactivo -->
-    <div class="sidebar-hint"></div>
+    <!-- Header Superior -->
+    <iframe id="frame-header" src="header/<?php echo $rolMin; ?>/prin.php" name="header"></iframe>
 
-    <div class="main-layout">
-        <!-- Header -->
-        <iframe id="frame-header" src="header/<?php echo $rolMin; ?>/prin.php" name="header"></iframe>
-
-        <!-- Sidebar (Se expande al pasar el ratón por encima del layout) -->
+    <!-- Sidebar dinámico (Contenedor controla el hover) -->
+    <div id="contenedor-sidebar">
         <iframe id="frame-sidebar" src="sidebar/<?php echo $rolMin; ?>/prin.php" name="sidebar"></iframe>
-
-        <!-- Contenido -->
-        <iframe id="frame-content" src="content/<?php echo $rolMin; ?>/prin.php" name="content"></iframe>
     </div>
+
+    <!-- Contenido Principal -->
+    <iframe id="frame-content" src="content/<?php echo $rolMin; ?>/prin.php" name="content"></iframe>
 
 </body>
 </html>
