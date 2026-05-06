@@ -1,20 +1,27 @@
 <?php
+session_start(); // Necesario para guardar el rol elegido de forma privada
+
 // Configuración de tu Firebase
 $projectId = "yr92q8h4y5972h4y952qhy3f"; 
 $apiKey = "AIzaSyBwhUOE8XpDFGf7dsqEdfXh2FCWE94JR2w"; 
 
-// 1. CHEQUEO DE COOKIE (La caché local)
+// 1. PROCESAR SELECCIÓN (Si viene del formulario de abajo)
+if (isset($_POST['set_modulo'])) {
+    $_SESSION['modulo_activo'] = $_POST['set_modulo'];
+    header("Location: /CEC.php"); // Redirige a la URL limpia sin parámetros
+    exit();
+}
+
+// 2. CHEQUEO DE COOKIE (Caché local)
 if (!isset($_COOKIE['auth_061_token'])) {
-    // Si no hay cookie, de patitas a la calle (al login)
     header("Location: /login.php");
     exit();
 }
 
-// 2. RECUPERAR EL USUARIO
+// 3. RECUPERAR EL USUARIO
 $usuarioDoc = base64_decode($_COOKIE['auth_061_token']);
 
-// 3. CONSULTA A FIRESTORE PARA SACAR LOS ROLES
-// Usamos la API REST con tu API KEY para que entre aunque esté privado
+// 4. CONSULTA A FIRESTORE PARA SACAR LOS ROLES
 $url = "https://firestore.googleapis.com/v1/projects/{$projectId}/databases/(default)/documents/empleadosX/{$usuarioDoc}?key={$apiKey}";
 
 $ch = curl_init();
@@ -29,7 +36,6 @@ $misRoles = [];
 
 if ($httpCode == 200) {
     $data = json_decode($response, true);
-    // Extraemos el array de roles de la estructura de Firebase
     $rolesArray = $data['fields']['roles']['arrayValue']['values'] ?? [];
     
     foreach ($rolesArray as $item) {
@@ -38,7 +44,7 @@ if ($httpCode == 200) {
         }
     }
 } else {
-    // Si la cookie dice que existes pero Firebase dice que no, limpiamos y fuera
+    // Si la cookie no coincide con Firebase, limpiamos y fuera
     setcookie("auth_061_token", "", time() - 3600, "/");
     header("Location: /login.php");
     exit();
@@ -74,7 +80,6 @@ if ($httpCode == 200) {
         h2 { margin: 0 0 10px 0; color: #d32f2f; font-size: 1.5rem; }
         .user-tag { font-size: 0.85rem; color: #777; margin-bottom: 30px; text-transform: uppercase; letter-spacing: 1px; }
         
-        /* Botones de selección */
         .btn-modulo {
             display: block;
             width: 100%;
@@ -108,15 +113,18 @@ if ($httpCode == 200) {
         <h2>SELECTOR DE ROL</h2>
         <div class="user-tag">Operador: <strong><?php echo htmlspecialchars($usuarioDoc); ?></strong></div>
 
-        <!-- Botón 061 -->
-        <?php if (in_array("061", $misRoles)): ?>
-            <button class="btn-modulo" onclick="modulo_seleccionado('061')">Acceder Terminal 061</button>
-        <?php endif; ?>
+        <!-- Formulario oculto para enviar el rol por POST -->
+        <form id="formSeleccion" method="POST" action="">
+            <input type="hidden" name="set_modulo" id="inputModulo">
+            
+            <?php if (in_array("061", $misRoles)): ?>
+                <button type="button" class="btn-modulo" onclick="modulo_seleccionado('061')">Acceder Terminal 061</button>
+            <?php endif; ?>
 
-        <!-- Botón Dirección -->
-        <?php if (in_array("Dir", $misRoles)): ?>
-            <button class="btn-modulo dir" onclick="modulo_seleccionado('Dir')">Acceder Dirección (Dir)</button>
-        <?php endif; ?>
+            <?php if (in_array("Dir", $misRoles)): ?>
+                <button type="button" class="btn-modulo dir" onclick="modulo_seleccionado('Dir')">Acceder Dirección (Dir)</button>
+            <?php endif; ?>
+        </form>
 
         <?php if (empty($misRoles)): ?>
             <p style="color: red; font-weight: bold;">Sin roles asignados en sistema.</p>
@@ -127,8 +135,9 @@ if ($httpCode == 200) {
 
     <script>
         function modulo_seleccionado(modulo) {
-            // Te mando a CEC.php con el parámetro que has elegido
-            window.location.href = "CEC.xsp?modulo=" + modulo;
+            // Asignamos el valor al input oculto y enviamos el formulario
+            document.getElementById('inputModulo').value = modulo;
+            document.getElementById('formSeleccion').submit();
         }
     </script>
 </body>
