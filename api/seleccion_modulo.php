@@ -1,16 +1,20 @@
 <?php
+// Configuración de tu Firebase
 $projectId = "yr92q8h4y5972h4y952qhy3f"; 
-$apiKey = "AIzaSyBwhUOE8XpDFGf7dsqEdfXh2FCWE94JR2w"; // Usamos la key por tus reglas privadas
+$apiKey = "AIzaSyBwhUOE8XpDFGf7dsqEdfXh2FCWE94JR2w"; 
 
-$usuario = $_POST['usuario'] ?? '';
-$passInput = $_POST['password'] ?? '';
-
-if (!$usuario || !$passInput) {
-    header("Location: login.php");
+// 1. CHEQUEO DE COOKIE (La caché local)
+if (!isset($_COOKIE['auth_061_token'])) {
+    // Si no hay cookie, de patitas a la calle (al login)
+    header("Location: /login.php");
     exit();
 }
 
-$usuarioDoc = trim($usuario); 
+// 2. RECUPERAR EL USUARIO
+$usuarioDoc = base64_decode($_COOKIE['auth_061_token']);
+
+// 3. CONSULTA A FIRESTORE PARA SACAR LOS ROLES
+// Usamos la API REST con tu API KEY para que entre aunque esté privado
 $url = "https://firestore.googleapis.com/v1/projects/{$projectId}/databases/(default)/documents/empleadosX/{$usuarioDoc}?key={$apiKey}";
 
 $ch = curl_init();
@@ -21,67 +25,111 @@ $response = curl_exec($ch);
 $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
 curl_close($ch);
 
+$misRoles = [];
+
 if ($httpCode == 200) {
-    $json = json_decode($response, true);
-    $passFirebase = $json['fields']['contrasena']['stringValue'] ?? '';
-
-    if ($passInput === $passFirebase) {
-        // --- LOGIN CORRECTO: Procesar Roles ---
-        $rolesRaw = $json['fields']['roles']['arrayValue']['values'] ?? [];
-        $misRoles = [];
-
-        foreach ($rolesRaw as $roleItem) {
-            $misRoles[] = $roleItem['stringValue'];
+    $data = json_decode($response, true);
+    // Extraemos el array de roles de la estructura de Firebase
+    $rolesArray = $data['fields']['roles']['arrayValue']['values'] ?? [];
+    
+    foreach ($rolesArray as $item) {
+        if (isset($item['stringValue'])) {
+            $misRoles[] = $item['stringValue'];
         }
-
-        // Mostramos una interfaz sencilla para elegir el módulo
-        ?>
-        <!DOCTYPE html>
-        <html lang="es">
-        <head>
-            <meta charset="UTF-8">
-            <title>Selección de Módulo - 061</title>
-            <style>
-                body { font-family: sans-serif; background: #1a1a1a; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; color: white; }
-                .container { background: #fff; padding: 40px; border-radius: 15px; text-align: center; color: #333; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
-                .btn-modulo { display: block; width: 200px; padding: 15px; margin: 10px auto; border: none; border-radius: 8px; background: #d32f2f; color: white; font-weight: bold; cursor: pointer; transition: 0.3s; text-decoration: none; }
-                .btn-modulo:hover { background: #b71c1c; transform: translateY(-2px); }
-                h2 { margin-bottom: 20px; font-size: 1.2rem; }
-            </style>
-        </head>
-        <body>
-            <div class="container">
-                <img src="/imagenes/061.png" style="height: 60px; margin-bottom: 10px;">
-                <h2>BIENVENIDO, <?php echo htmlspecialchars($usuarioDoc); ?></h2>
-                <p>Selecciona tu terminal de acceso:</p>
-
-                <?php if (in_array("061", $misRoles)): ?>
-                    <button class="btn-modulo" onclick="modulo_seleccionado('061')">ACCESO 061</button>
-                <?php endif; ?>
-
-                <?php if (in_array("Dir", $misRoles)): ?>
-                    <button class="btn-modulo" onclick="modulo_seleccionado('Dir')">DIRECCIÓN (Dir)</button>
-                <?php endif; ?>
-
-                <?php if (empty($misRoles)): ?>
-                    <p style="color: red;">No tienes roles asignados.</p>
-                <?php endif; ?>
-            </div>
-
-            <script>
-                function modulo_seleccionado(tipo) {
-                    // Redirigir a CEC.php pasando el rol seleccionado
-                    window.location.href = "CEC.php?modulo=" + tipo;
-                }
-            </script>
-        </body>
-        </html>
-        <?php
-        exit();
-
-    } else {
-        echo "<script>alert('Contraseña Incorrecta'); window.location='login.php';</script>";
     }
 } else {
-    echo "<script>alert('Error de acceso: Usuario no encontrado'); window.location='login.php';</script>";
+    // Si la cookie dice que existes pero Firebase dice que no, limpiamos y fuera
+    setcookie("auth_061_token", "", time() - 3600, "/");
+    header("Location: /login.php");
+    exit();
 }
+?>
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>061 Málaga - Selector de Módulo</title>
+    <style>
+        body {
+            margin: 0;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: #121212;
+            font-family: 'Segoe UI', sans-serif;
+            color: white;
+        }
+        .container {
+            background: #fff;
+            padding: 40px;
+            border-radius: 15px;
+            text-align: center;
+            color: #333;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            width: 380px;
+        }
+        .logo { height: 70px; margin-bottom: 20px; }
+        h2 { margin: 0 0 10px 0; color: #d32f2f; font-size: 1.5rem; }
+        .user-tag { font-size: 0.85rem; color: #777; margin-bottom: 30px; text-transform: uppercase; letter-spacing: 1px; }
+        
+        /* Botones de selección */
+        .btn-modulo {
+            display: block;
+            width: 100%;
+            padding: 16px;
+            margin: 12px 0;
+            border: none;
+            border-radius: 8px;
+            background: #d32f2f;
+            color: white;
+            font-size: 1rem;
+            font-weight: bold;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .btn-modulo:hover {
+            background: #b71c1c;
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(211, 47, 47, 0.4);
+        }
+        .btn-modulo.dir { background: #222; }
+        .btn-modulo.dir:hover { background: #000; }
+
+        .logout { margin-top: 20px; font-size: 0.8rem; color: #d32f2f; cursor: pointer; text-decoration: underline; }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <img src="/imagenes/061.png" class="logo" alt="061">
+        <h2>SELECTOR DE ROL</h2>
+        <div class="user-tag">Operador: <strong><?php echo htmlspecialchars($usuarioDoc); ?></strong></div>
+
+        <!-- Botón 061 -->
+        <?php if (in_array("061", $misRoles)): ?>
+            <button class="btn-modulo" onclick="modulo_seleccionado('061')">Acceder Terminal 061</button>
+        <?php endif; ?>
+
+        <!-- Botón Dirección -->
+        <?php if (in_array("Dir", $misRoles)): ?>
+            <button class="btn-modulo dir" onclick="modulo_seleccionado('Dir')">Acceder Dirección (Dir)</button>
+        <?php endif; ?>
+
+        <?php if (empty($misRoles)): ?>
+            <p style="color: red; font-weight: bold;">Sin roles asignados en sistema.</p>
+        <?php endif; ?>
+
+        <div class="logout" onclick="window.location.href='/login.php?logout=true'">Cerrar Sesión</div>
+    </div>
+
+    <script>
+        function modulo_seleccionado(modulo) {
+            // Te mando a CEC.php con el parámetro que has elegido
+            window.location.href = "/CEC.php?modulo=" + modulo;
+        }
+    </script>
+</body>
+</html>
