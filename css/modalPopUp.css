@@ -1,0 +1,333 @@
+
+
+/* CSS Document */
+
+/***GENERALES. RESETEO PARA NAVEGADORES***/
+
+body, div, dl, dt, dd, ul, ol, li, h1, h2, h3, h4, h5, h6, pre, form, fieldset, input, textarea, p, blockquote, th, td {
+    margin: 0;
+    padding: 0;
+}
+table {
+    border-collapse: collapse;
+    border-spacing: 0;
+}
+fieldset, img {
+    border: 0 none;
+}
+address, caption, cite, code, dfn, em, strong, th, var {
+    font-style: normal;
+    font-weight: normal;
+}
+ol, ul {
+    list-style: none outside none;
+}
+caption, th {
+    text-align: left;
+}
+h1, h2, h3, h4, h5, h6 {
+    font-size: 100%;
+    font-weight: normal;
+}
+q:before, q:after {
+    content: "";
+}
+abbr, acronym {
+    border: 0 none;
+}
+.ocultar {
+    display: none;
+}
+
+.nombreAlumno{
+    color: #297A38;
+    font-family: Verdana,Geneva,sans-serif;
+    font-size: 65%;
+    font-weight: bold;
+    left: 220px;
+    position: absolute;
+    top: 78px;
+}
+/* CABECERA */
+#cabecera {
+    background-image: url("../images/bg_header.jpg");
+    background-repeat: repeat-x;
+    height: 101px;
+    width: 100%;
+}
+#cabInferior{
+	background-image: url("../images/bg_header.jpg");
+    height: 20px;
+    width: 100%;
+}
+#logoRayuelaInt {
+    float: left;
+    width: 220px;
+}
+#fichaSuperior {
+    padding-top: 15px;
+    margin-left: 15px;
+}
+#fichaSuperior img {
+    border: 1px solid #CCCCCC;
+    float: left;
+    margin-right: 8px;
+    border: medium none;
+    cursor: pointer;
+}
+
+#fichaSuperior img.foto
+{
+	border-radius: 50%;
+}
+
+#fichaSuperior .iconoNotificacionMensajeria{
+	min-width: 8px;
+	position: absolute;
+	left: 50px;
+	bottom: 70px;
+    text-align: center;
+	background: #C00000;
+    padding: 1px 3px;
+    border: 2px solid #fff;
+    border-radius: 100%;
+}
+#fichaSuperior .iconoNotificacionMensajeria a{
+	font-family: Verdana,Geneva,sans-serif;
+	font-size: 10px;
+	color: #fff;
+	border: none !important;
+	padding: 0 !important;
+}
+
+#fichaSuperior .iconoNotificacionMensajeria a:hover{
+	text-decoration: none !important;
+}
+
+#fichaSuperior img.icono {
+    border: 0 none;
+}
+#fichaSuperior p {
+    color: #272726;
+    font-family: Verdana,Geneva,sans-serif;
+    font-size: 65%;
+    font-weight: bold;
+    margin-bottom: 2px;
+}
+#fichaSuperior p.textoCentro {
+    font-weight: normal;
+}
+#fichaSuperior a.primero {
+    border-right: medium none;
+    padding-left: 0;
+}
+#fichaSuperior a, .enlace {
+    border-right: 1px dotted #CCCCCC;
+    color: #646361;
+    font-weight: normal;
+    padding-left: 1px;
+    padding-right: 3px;
+    text-decoration: none;
+}
+#fichaSuperior a:hover {
+    text-decoration: underline;
+}
+#fichaSuperior a.nosepara {
+    border-right: 0 none;
+    float: left;
+}
+
+#logoExtremaduraInt {
+	right: 30%;
+	top: 0px;
+	position: absolute;
+}
+#logoFEDER {
+	left: 40%;
+    bottom: 30%;
+    position: absolute;
+	color:#373737;
+	font-family: arial;
+	font-size: 70%;
+	display: inline-flex;
+}
+#logoFEDER p {
+    align-self: center;
+	margin-right: 5px;
+	background: rgb(237, 237, 237);
+	background: -moz-linear-gradient(top, rgb(237, 237, 237) 0%, rgb(246, 246, 246) 9%, rgb(246, 246, 246) 14%, rgb(255, 255, 255) 52%, rgb(255, 255, 255) 100%);
+	background: -webkit-gradient(left top, left bottom, color-stop(0%, rgba(237,237,237,1)), color-stop(9%, rgba(246,246,246,1)), color-stop(14%, rgba(246,246,246,1)), color-stop(52%, rgba(255,255,255,1)), color-stop(100%, rgba(255,255,255,1)));
+	background: -webkit-linear-gradient(top, rgba(237,237,237,1) 0%, rgba(246,246,246,1) 9%, rgba(246,246,246,1) 14%, rgba(255,255,255,1) 52%, rgba(255,255,255,1) 100%);
+	background: -o-linear-gradient(top, rgba(237,237,237,1) 0%, rgba(246,246,246,1) 9%, rgba(246,246,246,1) 14%, rgba(255,255,255,1) 52%, rgba(255,255,255,1) 100%);
+	background: -ms-linear-gradient(top, rgba(237,237,237,1) 0%, rgba(246,246,246,1) 9%, rgba(246,246,246,1) 14%, rgba(255,255,255,1) 52%, rgba(255,255,255,1) 100%);
+	background: linear-gradient(to bottom,
+	rgb(237, 237, 237) 0%, rgb(246, 246, 246) 9%, rgb(246, 246, 246) 14%, rgb(255, 255, 255) 52%,
+	rgb(255, 255, 255) 100%);
+	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ededed', endColorstr='#ffffff', GradientType=0 );
+}
+#logoFEDER img {
+    width: 75px;
+    height:60px;
+	z-index: 200;
+}
+
+#ocultarCerrarCabecera {
+    cursor: pointer;
+    position: absolute;
+    right: 35px;
+    top: 0;
+}
+#salir {
+    cursor: pointer;
+    position: absolute;
+    right: 5px;
+    top: 0;
+}
+#menuSup {
+    margin-top: 5px;
+    position: absolute;
+    right: 380px;
+}
+#menuSup li {
+    background-image: url("../images/bg_li_msup.gif");
+    background-repeat: repeat-x;
+    border-radius: 7px 0 0 0;
+
+    color: #646361;
+    float: left;
+    font-family: Verdana,Geneva,sans-serif;
+    font-size: 60%;
+
+    height: 31px;
+    padding-left: 6px;
+    padding-right: 6px;
+    padding-top: 6px;
+    text-transform: uppercase;
+    cursor:pointer;
+}
+
+#menuSup li.seleccionado {
+    background-image: url("../images/bg_li_msup_sel.gif");
+    cursor:default;
+    color: #FFFFFF;
+}
+
+#menuSup li img {
+    padding-right: 4px;
+    vertical-align: middle;
+}
+
+#menuSup li.entorno {
+    background-image: none;
+    color: #F8C400;
+    font-family: verdana;
+    font-size: 18px;
+    font-weight: bold;
+}
+
+#menuSup li.aviso {
+    background-image: none;
+    height: 10px;
+    padding-bottom: 6px;
+    margin-top: 9px;
+    color: tomato;
+    font-weight: bold;
+    text-transform: none;
+}
+
+/*********************************************************************************/
+#menuAccDirPer {
+
+    height: 75px;
+    position: absolute;
+    right: 5px;
+    top: 16px;
+}
+
+
+#menuAccDirPer li {
+
+    float: left;
+
+    font-family: Verdana,Geneva,sans-serif;
+    font-size: 55%;
+
+
+    height: 74px;
+    padding-left: 3px;
+    padding-right: 3px;
+    padding-top: 3px;
+    cursor:pointer;
+    border-right: 2px dotted #E6E6E6;
+    text-align:center;
+}
+
+#menuAccDirPer li.seleccionado {
+    cursor:default;
+}
+
+
+#menuAccDirPer li:hover {
+    background: rgba(0,0,0,0.2);
+	-webkit-box-shadow:inset 0 -1px rgba(0,0,0,0);
+   -moz-box-shadow:inset 0 -1px rgba(0,0,0,0);
+        box-shadow:inset 0 -1px rgba(0,0,0,0);
+	color: #fff;
+}
+
+#iconoAccDir img {
+    padding-right: 3px;
+    vertical-align: middle;
+    horizontal-align: middle;
+
+     height: 40px;
+     width: 40px;
+}
+
+
+div.nombreAccDir {
+    height: 36px;
+}
+
+div.nombreAccDir {
+
+	padding-top: 5px;
+}
+
+
+
+/***** ESTILOS PARA LA VENTANA DE AVISO *****/
+#avisoConBloqueoContenedor {
+    background-color: #E8E8E8;
+    display: none;
+    font-family: arial;
+    font-size: 8pt;
+    left: 50%;
+    margin-left: -239px;
+    margin-top: -71px;
+    max-width: 500px;
+    position: absolute;
+    text-align: left;
+    top: 200px;
+    z-index: 200;
+}
+#avisoConBloqueoContenedor span.cerrar {
+    cursor: pointer;
+    position: absolute;
+    right: -6px;
+    top: -6px;
+}
+#avisoConBloqueo {
+    border: 1px ridge #A6A3A3;
+    display: inline-block;
+    padding: 10px;
+}
+#contenedorAvisos {
+    display: none;
+}
+/***** FIN ESTILOS PARA LA VENTANA DE AVISO *****/
+
+
+
+/***** POP UP Otros PERFILES *****/
+ #element_to_pop_up { display:none; }
