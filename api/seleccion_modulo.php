@@ -114,7 +114,7 @@ if ($httpCode == 200) {
         <div class="user-tag">Operador: <strong><?php echo htmlspecialchars($usuarioDoc); ?></strong></div>
 
         <!-- Formulario oculto para enviar el rol por POST -->
-        <form id="formSeleccion" method="POST" action="">
+        <form id="formSeleccion" method="POST" action="CEC.xsp">
             <input type="hidden" name="set_modulo" id="inputModulo">
             
             <?php if (in_array("061", $misRoles)): ?>
